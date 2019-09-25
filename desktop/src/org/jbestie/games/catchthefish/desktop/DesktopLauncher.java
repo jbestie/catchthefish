@@ -1,8 +1,8 @@
-package org.jbestie.games.desktop;
+package org.jbestie.games.catchthefish.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import org.jbestie.games.CatchTheFishMainClass;
+import org.jbestie.games.catchthefish.core.CatchTheFishMainClass;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {

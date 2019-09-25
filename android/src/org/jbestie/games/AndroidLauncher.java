@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import org.jbestie.games.CatchTheFishMainClass;
+import org.jbestie.games.catchthefish.core.CatchTheFishMainClass;
 
 public class AndroidLauncher extends AndroidApplication {
     @Override

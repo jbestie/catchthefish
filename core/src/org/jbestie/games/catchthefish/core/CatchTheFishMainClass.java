@@ -1,4 +1,4 @@
-package org.jbestie.games;
+package org.jbestie.games.catchthefish.core;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -6,11 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import org.jbestie.games.model.AbstractObject;
-import org.jbestie.games.model.Bubble;
-import org.jbestie.games.model.Fish;
+import org.jbestie.games.catchthefish.core.model.AbstractObject;
+import org.jbestie.games.catchthefish.core.model.Bubble;
+import org.jbestie.games.catchthefish.core.model.Fish;
+import org.jbestie.games.catchthefish.core.utils.GameScreenUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,6 +29,9 @@ public class CatchTheFishMainClass extends ApplicationAdapter {
     private Viewport viewport;
     private OrthographicCamera camera;
 
+    private final Vector3 touchPoint = new Vector3();
+    private boolean justTouched = false;
+
     private long time = System.currentTimeMillis();
 
     @Override
@@ -37,6 +42,8 @@ public class CatchTheFishMainClass extends ApplicationAdapter {
 
         viewport = new ExtendViewport((float)Gdx.graphics.getWidth(), (float)Gdx.graphics.getHeight(), camera);
         viewport.apply();
+
+        GameScreenUtils.setScreenViewPort(viewport);
 
         batch = new SpriteBatch();
         background = new Texture("background.png");
@@ -56,6 +63,13 @@ public class CatchTheFishMainClass extends ApplicationAdapter {
     @Override
     public void render() {
         camera.update();
+        camera.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+        justTouched = Gdx.input.justTouched();
+        checkObjectsForHit(frontFishList);
+        checkObjectsForHit(frontBubbleList);
+        checkObjectsForHit(backFishList);
+        checkObjectsForHit(backBubbleList);
 
         long currentTime = System.currentTimeMillis();
         long delta = currentTime - time;
@@ -71,7 +85,7 @@ public class CatchTheFishMainClass extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-        batch.draw(background, 0, 0);
+        batch.draw(background, 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
 
         // draw bubbles
         iterateOverBubbles(backBubbleList, 3);
@@ -89,6 +103,24 @@ public class CatchTheFishMainClass extends ApplicationAdapter {
 
     }
 
+    private void checkObjectsForHit(List<AbstractObject> objects) {
+        if (!justTouched) {
+            return;
+        }
+
+        Iterator<AbstractObject> iterator = objects.iterator();
+        while (iterator.hasNext()) {
+            AbstractObject object = iterator.next();
+            if (object.checkHit(touchPoint.x, touchPoint.y)) {
+                if (!object.isShowOnHit()) {
+                    iterator.remove();
+                }
+                justTouched = false;
+                return;
+            }
+        }
+    }
+
     private void iterateOverFishes(List<AbstractObject> fishList, int size) {
         iterateOverObjects(fishList);
 
@@ -98,13 +130,13 @@ public class CatchTheFishMainClass extends ApplicationAdapter {
     }
 
     private void iterateOverObjects(List<AbstractObject> abstractObjects) {
-        Iterator<AbstractObject> fishIterator = abstractObjects.iterator();
-        while(fishIterator.hasNext()){
-            AbstractObject object = fishIterator.next();
+        Iterator<AbstractObject> objectIterator = abstractObjects.iterator();
+        while(objectIterator.hasNext()){
+        AbstractObject object = objectIterator.next();
             object.move();
             object.draw(batch);
             if (!object.isInViewPort()) {
-                fishIterator.remove();
+                objectIterator.remove();
             }
         }
     }

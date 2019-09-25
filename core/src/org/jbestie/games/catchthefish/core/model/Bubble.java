@@ -1,7 +1,7 @@
-package org.jbestie.games.model;
+package org.jbestie.games.catchthefish.core.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import org.jbestie.games.catchthefish.core.utils.GameScreenUtils;
 
 public class Bubble extends AbstractObject {
     private final static Texture TEST_BUBBLE = new Texture("sea/bubble.png");
@@ -15,11 +15,16 @@ public class Bubble extends AbstractObject {
     }
 
     @Override
+    public boolean isShowOnHit() {
+        return false;
+    }
+
+    @Override
     protected boolean isObjectOutOfScreen() {
-        return (y > Gdx.graphics.getHeight());
+        return (y > GameScreenUtils.getWorldHeight());
     }
 
     public static Bubble getDefaultBubbleWithRandomPositionAndSpeed() {
-        return new Bubble(TEST_BUBBLE, RANDOM_GENERATOR.nextInt(Gdx.graphics.getWidth()), -TEST_BUBBLE.getHeight(), ObjectDirection.UP, RANDOM_GENERATOR.nextInt(3) + 1);
+        return new Bubble(TEST_BUBBLE, RANDOM_GENERATOR.nextInt((int) GameScreenUtils.getWorldWidth()), -TEST_BUBBLE.getHeight(), ObjectDirection.UP, RANDOM_GENERATOR.nextInt(3) + 1);
     }
 }

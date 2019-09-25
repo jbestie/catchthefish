@@ -1,4 +1,4 @@
-package org.jbestie.games.model;
+package org.jbestie.games.catchthefish.core.model;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -22,6 +22,7 @@ public abstract class AbstractObject {
     protected float y;
     protected ObjectDirection direction;
     protected float speed;
+    protected boolean gotHit;
 
     public AbstractObject(Texture objectTexture, float x, float y, ObjectDirection direction) {
         this(objectTexture, x, y, direction, 1.0f);
@@ -48,8 +49,14 @@ public abstract class AbstractObject {
     }
 
     public void draw(SpriteBatch spriteBatch) {
+        if (gotHit && !isShowOnHit()) {
+            return;
+        }
+
         spriteBatch.draw(objectSprite, x, y);
     }
+
+    public abstract boolean isShowOnHit();
 
     protected void flipDirection() {
         switch (direction) {
@@ -106,4 +113,26 @@ public abstract class AbstractObject {
         int direction = RANDOM_GENERATOR.nextInt(2);
         return (direction == 0) ? ObjectDirection.LEFT : ObjectDirection.RIGHT;
     }
+
+    public float getWidth() {
+        return objectSprite.getWidth();
+    }
+
+    public float getHeight() {
+        return objectSprite.getHeight();
+    }
+
+    public boolean checkHit(float xPos, float yPos) {
+        boolean hit = (x <= xPos) && (xPos <= (x + getWidth())) && (y <= yPos) && (yPos <= (y + getHeight()));
+        if (hit) {
+            performActionOnHit();
+            gotHit = true;
+        }
+        return hit;
+    }
+
+    protected void performActionOnHit() {
+
+    }
+
 }

@@ -1,7 +1,7 @@
-package org.jbestie.games.model;
+package org.jbestie.games.catchthefish.core.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import org.jbestie.games.catchthefish.core.utils.GameScreenUtils;
 
 import java.util.Random;
 
@@ -26,8 +26,13 @@ public class Fish extends AbstractObject {
     }
 
     @Override
+    public boolean isShowOnHit() {
+        return true;
+    }
+
+    @Override
     protected boolean isObjectOutOfScreen() {
-        return (x <= -objectSprite.getWidth()) || (x > Gdx.graphics.getWidth());
+        return (x <= -objectSprite.getWidth()) || (x > GameScreenUtils.getWorldWidth());
     }
 
     @Override
@@ -55,8 +60,8 @@ public class Fish extends AbstractObject {
 
     private static Fish getFishWithRandomSpeedAndPosition(Texture goldFish) {
         ObjectDirection direction = getRandomHorizontalDirection();
-        float xPosition = (direction == ObjectDirection.LEFT) ? Gdx.graphics.getWidth() : -BLUE_FISH.getWidth();
-        return new Fish(goldFish, xPosition, RANDOM_GENERATOR.nextInt(Gdx.graphics.getHeight() - goldFish.getHeight()), direction, new Random().nextInt(4) + 1);
+        float xPosition = (direction == ObjectDirection.LEFT) ? GameScreenUtils.getWorldWidth() : -BLUE_FISH.getWidth();
+        return new Fish(goldFish, xPosition, RANDOM_GENERATOR.nextInt((int) (GameScreenUtils.getWorldHeight() - goldFish.getHeight())), direction, new Random().nextInt(4) + 1);
     }
 
     public static Fish getRandomFish() {
@@ -75,4 +80,10 @@ public class Fish extends AbstractObject {
         }
     }
 
+
+    @Override
+    protected void performActionOnHit() {
+        super.performActionOnHit();
+        speed = 5;
+    }
 }
